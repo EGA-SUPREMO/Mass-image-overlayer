@@ -29,22 +29,37 @@ def getWidthByHeight(height, ratio):
 def getHeightByWidth(width, ratio):
 	return width/ratio
 
-def getRatio(file):
-	return subprocess.run(['magick', file, '-auto-orient', '-format', '%[fx:w/h]', 'info:'], stdout=subprocess.PIPE).stdout.decode('utf-8')
-
 def getSmallerSizesOfCarsForTemplates(file):
-	w = getWidth(file) * 0.1
+	w = getWidth(file) * 0.5
 	h = getHeight(file) * 0.2
 	return w, h
 
-def get_biggest_size_for_name(w, h, template_file)
-	getSmallerSizesOfCarsForTemplates('inn.jpeg')
+def get_biggest_size_for_template(template_file, car_file):
 
-print(getWidth('int.png'))
-print(getHeight('int.png'))
+	max_width = getWidth(car_file)
+	max_height = getHeight(car_file)
 
-print(getWidth('inn1.jpeg'))
-print(getHeight('inn1.jpeg'))
+	w, h = getSmallerSizesOfCarsForTemplates(car_file)
+
+	ratio = getRatio(template_file)
+	h_template = getHeightByWidth(w, ratio)
+	w_template = getWidthByHeight(h, ratio)
+
+	if w_template > max_width:
+		w_template = max_width
+		h = getHeightByWidth(w_template, ratio)
+
+	if h_template > max_height:
+		h_template = max_height
+		w = getWidthByHeight(h_template, ratio)
+
+	if h_template>h:
+		return w, h_template
+	
+	return w_template, h
+
+
+print(get_biggest_size_for_template('int.png', 'inn1.jpeg'))
 
 def merge_images(template_folder, car_folder, filename_templates, filename_cars):
 	global i
@@ -53,6 +68,9 @@ def merge_images(template_folder, car_folder, filename_templates, filename_cars)
 			i += 1
 			file_template = template_folder+"/"+filename_template
 			file_car = car_folder+"/"+filename_car
+
+			w, h = get_biggest_size_for_template('int.png', 'inn1.jpeg')
+
 			#os.system(f"magick -background none '{file_car}' '{file_template}' -layers flatten 'out/{i}_out.png'")
 
 for car_folder in car_folders:
