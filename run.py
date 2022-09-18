@@ -59,8 +59,6 @@ def get_biggest_size_for_template(template_file, car_file):
 	return w_template, h
 
 
-print(get_biggest_size_for_template('int.png', 'inn1.jpeg'))
-
 def merge_images(template_folder, car_folder, filename_templates, filename_cars):
 	global i
 	for filename_template in filename_templates:
@@ -69,9 +67,16 @@ def merge_images(template_folder, car_folder, filename_templates, filename_cars)
 			file_template = template_folder+"/"+filename_template
 			file_car = car_folder+"/"+filename_car
 
-			w, h = get_biggest_size_for_template('int.png', 'inn1.jpeg')
+			w, h = get_biggest_size_for_template(file_template, file_car)
+			w = round(w)
+			h = round(h)
+			x, y = 0, 0
+			if True:
+				x = round(getWidth(file_car) - w)
+				y = round(getHeight(file_car) - y)
 
-			#os.system(f"magick -background none '{file_car}' '{file_template}' -layers flatten 'out/{i}_out.png'")
+			print(i)
+			os.system(f"magick -background none '{file_car}'  \\( '{file_template}' -gravity southeast -geometry {w}x{h}! \\) -layers flatten 'out/{i}_out.png'")
 
 for car_folder in car_folders:
 	filename_templates = next(os.walk(dir_templates+car_folder), (None, None, []))[2]
