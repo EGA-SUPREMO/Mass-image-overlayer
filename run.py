@@ -66,8 +66,11 @@ def get_biggest_size_for_template(template_file, car_file):
 	return w_template, h
 
 
-def merge_images(template_folder, car_folder, filename_templates, filename_cars, rotation):
+def merge_images(template_folder, car_folder, filename_templates, filename_cars, dir_out, rotation):
 	global i
+
+	car_model = os.path.basename(car_folder)
+
 	for filename_car in filename_cars:
 		random_filename_others = random.sample(filename_templates, min(len(filename_templates), 2))
 		for filename_template in random_filename_others:
@@ -80,12 +83,13 @@ def merge_images(template_folder, car_folder, filename_templates, filename_cars,
 			h = round(h)
 
 			print(i)
+			random_dir = random.sample(directions, 1)
 			output_name = remove_extension(filename_car)
-			os.system(f"magick -background none -gravity {directions[3]} '{file_car}' {rotation} \\( '{file_template}' -geometry {w}x{h}! \\) -composite 'out/{output_name}_{i}.png'")
+			os.system(f"magick -background none -gravity {random_dir[0]} '{file_car}' {rotation} \\( '{file_template}' -geometry {w}x{h}! \\) -composite 'out{dir_out}{car_model}/{i}_{output_name}.png'")
 
 for car_folder in car_folders:
 	filename_templates = next(os.walk(dir_templates+car_folder), (None, None, []))[2]
 	filename_cars = next(os.walk(dir_cars + car_folder), (None, None, []))[2]
 
-	merge_images(dir_templates+car_folder, dir_cars+car_folder, filename_templates, filename_cars, "")
-	merge_images(dir_other, dir_cars+car_folder, filename_others, filename_cars, "-flop")
+	merge_images(dir_templates+car_folder, dir_cars+car_folder, filename_templates, filename_cars, "/Javier/", "")
+	merge_images(dir_templates+car_folder, dir_cars+car_folder, filename_templates, filename_cars, "/", "-flop")
